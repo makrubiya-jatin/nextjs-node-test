@@ -41,7 +41,7 @@ body {
   justify-content: space-between;
   align-items: center;
   position: absolute;
-  top: 8px;
+  top: 0px;
 }
 
 .logo {
