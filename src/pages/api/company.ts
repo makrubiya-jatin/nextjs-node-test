@@ -1,40 +1,25 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { Person } from "@/utils/common/person";
+
 import {
-  createUser,
-  deleteUserByName,
-  getAllUsers,
-  getUserByName,
-  updateUserByName,
-} from "@/utils/server/user";
+  createCompany,
+  deleteCompanyById,
+  getAllCompanies,
+  getCompanyById,
+  updateCompanyById,
+} from "@/utils/server/company";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const getPerson: NextApiHandler = async (req, res) => {
-  const person = req.query.person as Person;
+const getCompany: NextApiHandler = async (req, res) => {
+  const company = parseInt((req?.query?.company as string) || "0");
   try {
     let user;
-    if (!person) {
-      user = await getAllUsers();
+    if (!company) {
+      user = await getAllCompanies();
     } else {
-      switch (person) {
-        case Person.PersonA:
-          await sleep(1000);
-          break;
-        case Person.PersonB:
-          await sleep(3000);
-          break;
-        case Person.PersonC:
-          res.status(500).send("Error: Request failed for Person C");
-          return;
-        default:
-          res.status(404).send("Error: Person not found");
-          return;
-      }
-
-      user = await getUserByName(person);
+      user = await getCompanyById(company);
     }
 
     if (user) {
@@ -49,17 +34,17 @@ const getPerson: NextApiHandler = async (req, res) => {
   res.end();
 };
 
-const deletePerson: NextApiHandler = async (req, res) => {
-  const person = req.query.person as Person;
+const deleteCompany: NextApiHandler = async (req, res) => {
+  const company = parseInt((req?.query?.company as string) || "0");
 
-  if (!person) {
+  if (!company) {
     res.status(500).send("Error: User Name is required");
     res.end();
     return;
   }
 
   try {
-    await deleteUserByName(person);
+    await deleteCompanyById(company);
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
@@ -71,11 +56,11 @@ const deletePerson: NextApiHandler = async (req, res) => {
   res.end();
 };
 
-const addPerson: NextApiHandler = async (req, res) => {
+const addCompany: NextApiHandler = async (req, res) => {
   const newData = req.body;
 
   try {
-    await createUser(newData);
+    await createCompany(newData);
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
@@ -87,18 +72,18 @@ const addPerson: NextApiHandler = async (req, res) => {
   res.end();
 };
 
-const updatePerson: NextApiHandler = async (req, res) => {
-  const person = req.query.person as Person;
+const updateCompany: NextApiHandler = async (req, res) => {
+  const company = parseInt((req?.query?.company as string) || "0");
   const newData = req.body;
 
-  if (!person) {
+  if (!company) {
     res.status(500).send("Error: User Name is required");
     res.end();
     return;
   }
 
   try {
-    await updateUserByName(person, newData);
+    await updateCompanyById(company, newData);
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
@@ -113,16 +98,16 @@ const updatePerson: NextApiHandler = async (req, res) => {
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case "GET":
-      return getPerson(req, res);
+      return getCompany(req, res);
 
     case "POST":
-      return addPerson(req, res);
+      return addCompany(req, res);
 
     case "PUT":
-      return updatePerson(req, res);
+      return updateCompany(req, res);
 
     case "DELETE":
-      return deletePerson(req, res);
+      return deleteCompany(req, res);
 
     default:
       res.status(404).send({

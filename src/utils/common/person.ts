@@ -12,3 +12,7 @@ export enum Person {
   PersonB = "PersonB",
   PersonC = "PersonC",
 }
+
+export type Company = {
+  [name: string]: string
+}
